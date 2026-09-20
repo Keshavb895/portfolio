@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LogoLoop Component Styles
+   LogoLoop Component Styles (Pure Logos - No Custom Render Card)
    ========================================================================== */
 
 .logo-loop-container {
@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   user-select: none;
-  padding: 1.25rem 0;
+  padding: 1.5rem 0;
   box-sizing: border-box;
 }
 
@@ -18,15 +18,15 @@
   mask-image: linear-gradient(
     to right,
     transparent 0%,
-    black 10%,
-    black 90%,
+    black 12%,
+    black 88%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
-    black 10%,
-    black 90%,
+    black 12%,
+    black 88%,
     transparent 100%
   );
 }
@@ -39,63 +39,43 @@
   will-change: transform;
 }
 
-/* Individual Logo Item Box */
+/* Individual Logo Item - pure logo, no card background/border */
 .logo-loop-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 1.15rem 1.85rem;
-  border-radius: 1.4rem;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
   cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
 }
 
 .logo-loop-item.scale-hover:hover {
-  transform: translateY(-5px) scale(1.12);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--item-accent, #06b6d4);
-  box-shadow: 0 16px 36px -6px var(--item-accent, rgba(6, 182, 212, 0.4)),
-              0 0 28px -4px var(--item-accent, rgba(6, 182, 212, 0.3));
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.65));
 }
 
-.logo-item-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.logo-loop-item svg {
+  height: 100%;
+  width: auto;
+  max-height: 100%;
+  display: block;
+  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.5));
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-.logo-item-icon svg {
-  width: 52px;
-  height: 52px;
-  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.55));
-  transition: transform 0.3s ease;
+.logo-loop-item:hover svg {
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.4));
 }
 
-.logo-loop-item:hover .logo-item-icon svg {
-  transform: scale(1.15);
-}
-
-.logo-item-img {
+.logo-loop-item img {
+  height: 100%;
+  width: auto;
+  max-height: 100%;
   object-fit: contain;
   display: block;
-}
-
-.logo-item-name {
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.85);
-  transition: color 0.3s ease;
-}
-
-.logo-loop-item:hover .logo-item-name {
-  color: #ffffff;
 }
 
 /* Wrapper Section after Technology */
@@ -104,63 +84,26 @@
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 3rem clamp(2rem, 5vw, 6rem) 5rem;
+  padding: 3rem clamp(2rem, 5vw, 6rem) 4.5rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.75rem;
   z-index: 2;
-}
-
-.logo-loop-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.45rem;
-}
-
-.logo-loop-badge {
-  font-family: monospace;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #06b6d4;
-  background: rgba(6, 182, 212, 0.08);
-  border: 1px solid rgba(6, 182, 212, 0.2);
-  padding: 0.3rem 0.85rem;
-  border-radius: 9999px;
-}
-
-.logo-loop-title {
-  font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  margin: 0;
 }
 
 @media (max-width: 900px) {
   .logo-loop-section {
-    padding: 2.5rem 1.5rem 4rem;
+    padding: 2.5rem 1.5rem 3.5rem;
   }
 }
 
 @media (max-width: 600px) {
   .logo-loop-section {
-    padding: 2rem 1.25rem 3.5rem;
+    padding: 2rem 1.25rem 3rem;
   }
 
-  .logo-loop-item {
-    padding: 0.85rem 1.35rem;
-    border-radius: 1.15rem;
-  }
-
-  .logo-item-icon svg {
-    width: 38px;
-    height: 38px;
+  .logo-loop-item svg {
+    max-height: 40px;
   }
 }

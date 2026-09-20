@@ -5,11 +5,14 @@ export default function LogoLoop({
   logos = [],
   speed = 45,
   direction = 'left',
-  gap = 48,
-  logoHeight = 36,
+  width = '100%',
+  gap = 84,
+  logoHeight = 52,
   hoverSpeed = 0,
   fadeOut = true,
   scaleOnHover = true,
+  renderItem,
+  ariaLabel = 'Technologies and tools marquee',
   className = '',
   style = {}
 }) {
@@ -38,7 +41,6 @@ export default function LogoLoop({
 
       currentOffset += move;
 
-      // When half the duplicate track has scrolled, wrap around seamlessly
       const singleSetWidth = track.scrollWidth / 3;
       if (singleSetWidth > 0) {
         if (currentOffset >= singleSetWidth) {
@@ -68,41 +70,54 @@ export default function LogoLoop({
     <div
       ref={containerRef}
       className={`logo-loop-container ${fadeOut ? 'logo-loop-fade' : ''} ${className}`}
-      style={{ ...style }}
+      style={{ width, ...style }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       role="region"
-      aria-label="Technologies and tools marquee"
+      aria-label={ariaLabel}
     >
       <div
         ref={trackRef}
         className="logo-loop-track"
         style={{ gap: `${gap}px` }}
       >
-        {displayLogos.map((item, idx) => (
-          <div
-            key={idx}
-            className={`logo-loop-item ${scaleOnHover ? 'scale-hover' : ''}`}
-            title={item.name}
-            aria-label={item.name}
-            style={{
-              '--item-accent': item.color || '#06b6d4'
-            }}
-          >
-            {item.icon ? (
-              <span className="logo-item-icon" style={{ height: `${logoHeight}px`, width: `${logoHeight}px` }}>
-                {item.icon}
-              </span>
-            ) : item.src ? (
-              <img
-                src={item.src}
-                alt={item.alt || item.name || 'Technology logo'}
-                className="logo-item-img"
-                style={{ height: `${logoHeight}px` }}
-              />
-            ) : null}
-          </div>
-        ))}
+        {displayLogos.map((item, idx) => {
+          if (renderItem) {
+            return renderItem(item, idx);
+          }
+
+          if (item.node || item.icon) {
+            return (
+              <div
+                key={idx}
+                className={`logo-loop-item ${scaleOnHover ? 'scale-hover' : ''}`}
+                style={{
+                  height: `${logoHeight}px`,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                title={item.name || item.alt || ''}
+              >
+                {item.node || item.icon}
+              </div>
+            );
+          }
+
+          return (
+            <img
+              key={idx}
+              src={typeof item === 'string' ? item : item.src}
+              alt={item.alt || item.name || ''}
+              className={`logo-loop-item ${scaleOnHover ? 'scale-hover' : ''}`}
+              style={{
+                height: `${logoHeight}px`,
+                width: 'auto',
+                objectFit: 'contain'
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
