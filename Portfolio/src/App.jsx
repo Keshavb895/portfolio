@@ -4,6 +4,8 @@ import 'lenis/dist/lenis.css';
 import TextPressure from './components/TextPressure';
 import Topography from './components/Topography';
 import InteractiveTerminal from './components/InteractiveTerminal';
+import LogoLoop from './components/LogoLoop';
+import { TECH_LOGOS } from './components/techLogos';
 import './App.css';
 
 function getSmoothPath(points) {
@@ -578,6 +580,24 @@ function App() {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* LOGO LOOP / TECH ECOSYSTEM MARQUEE */}
+        <section className="logo-loop-section">
+          <div className="logo-loop-header">
+            <span className="logo-loop-badge">TECH ECOSYSTEM</span>
+            <h3 className="logo-loop-title">Tools, Frameworks & Infrastructure</h3>
+          </div>
+          <LogoLoop
+            logos={TECH_LOGOS}
+            speed={48}
+            direction="left"
+            gap={36}
+            logoHeight={28}
+            hoverSpeed={0}
+            fadeOut={true}
+            scaleOnHover={true}
+          />
         </section>
 
         {/* CONTACT SECTION */}
