@@ -108,8 +108,8 @@
   align-items: center;
   justify-content: center;
   padding: 0.55rem 1.35rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
   color: #ffffff;
   font-size: 0.825rem;
@@ -117,7 +117,8 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.25s ease;
-  cursor: default;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .btn-contact:hover {
@@ -179,7 +180,7 @@
 .hero-tagline {
   font-size: clamp(0.875rem, 1.1vw, 0.95rem);
   font-weight: 400;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.88);
   line-height: 1.6;
   margin: 0;
   letter-spacing: -0.01em;
@@ -260,9 +261,34 @@
   z-index: 2;
 }
 
+.section-eyebrow {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #3b82f6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.section-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 34px;
+  height: 2.5px;
+  background-color: #3b82f6;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
 .projects-header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
   margin-bottom: 3rem;
 }
 
@@ -662,7 +688,7 @@
 
 .contact-section {
   position: relative;
-  padding: 6rem clamp(4.5rem, 6.5vw, 8rem) 10rem;
+  padding: 2.25rem clamp(4.5rem, 6.5vw, 8rem) 8rem;
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
@@ -676,7 +702,7 @@
   width: 100%;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(6, 182, 212, 0.45) 20%, rgba(168, 85, 247, 0.5) 50%, rgba(236, 72, 153, 0.45) 80%, transparent 100%);
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
 }
 
@@ -710,18 +736,19 @@
 
 .contact-container {
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: clamp(4rem, 7vw, 8rem);
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(3rem, 5vw, 5rem);
+  align-items: stretch;
   width: 100%;
 }
 
-/* Left Column: Direct channels, availability, and socials */
+/* Right Column: Terminal Container */
 .contact-info-col {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1.75rem;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
 }
 
 .contact-status-badge {
@@ -891,29 +918,54 @@
   height: 16px;
 }
 
-/* Right Column: Contact Form Card */
+/* Left Column: Contact Form Card with Specular Border */
 .contact-form-col {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.contact-card-bezel {
-  position: relative;
-  z-index: 2;
-  border-radius: 1.75rem;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.08) 100%);
-  box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.75);
-  overflow: hidden;
+.contact-specular-bezel.specular-button {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 500px;
+  min-height: 500px;
+  max-height: 500px;
   box-sizing: border-box;
+  cursor: default;
+  transform: none !important;
+  padding: 0;
+  border-radius: 1.75rem;
+  box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.75);
+  background: #0d0e14;
+  overflow: hidden;
+}
+
+.contact-specular-bezel:active {
+  transform: none !important;
+}
+
+.contact-specular-bezel .specular-button__label {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-card-inner {
-  background: #0d0e14;
+  background: transparent;
   border-radius: calc(1.75rem - 1px);
-  padding: clamp(2rem, 3.5vw, 3rem);
+  padding: clamp(1.75rem, 2.5vw, 2.5rem);
   width: 100%;
+  height: 100%;
+  min-height: 0;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }
 
 .contact-form {
@@ -933,7 +985,7 @@
   flex-direction: column;
   gap: 0.55rem;
   width: 100%;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.15rem;
 }
 
 .form-label {
@@ -1230,6 +1282,18 @@
   .contact-container {
     grid-template-columns: 1fr;
     gap: 3rem;
+  }
+
+  .contact-specular-bezel.specular-button {
+    height: auto;
+    min-height: auto;
+    max-height: none;
+  }
+
+  .contact-specular-bezel.terminal-specular-bezel {
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
   }
 
   .site-footer {

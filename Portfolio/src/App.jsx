@@ -6,6 +6,7 @@ import Topography from './components/Topography';
 import InteractiveTerminal from './components/InteractiveTerminal';
 import LogoLoop from './components/LogoLoop';
 import { TECH_LOGOS } from './components/techLogos';
+import SpecularButton from './components/SpecularButton';
 import './App.css';
 
 function getSmoothPath(points) {
@@ -45,6 +46,33 @@ function App() {
   const glowRunnerRef = useRef(null);
   const totalLengthRef = useRef(0);
   const targetDistRef = useRef(0);
+  const lenisRef = useRef(null);
+
+  const handleScrollToSection = (target) => (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const isContact = target === '#contact';
+    const targetEl = typeof target === 'string' ? document.querySelector(target) : null;
+    const scrollTarget = targetEl || target;
+
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(scrollTarget, {
+        offset: isContact ? -20 : 0,
+        duration: isContact ? 5.0 : 1.4,
+        easing: isContact
+          ? (t) => -(Math.cos(Math.PI * t) - 1) / 2
+          : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      if (targetEl && targetEl.scrollIntoView) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: typeof target === 'number' ? target : 0, behavior: 'smooth' });
+      }
+    }
+  };
 
   useEffect(() => {
     // Initialize Lenis for luxurious momentum smooth scrolling
@@ -58,6 +86,7 @@ function App() {
       touchMultiplier: 1.5,
       infinite: false,
     });
+    lenisRef.current = lenis;
 
     // Compute dynamic path: straight from right of "Technologies I Used", then curved between images
     const updateCurvePath = () => {
@@ -258,7 +287,15 @@ function App() {
           const targetEl = document.querySelector(targetId);
           if (targetEl) {
             e.preventDefault();
-            lenis.scrollTo(targetEl, { offset: 0, duration: 1.3 });
+            e.stopPropagation();
+            const isContact = targetId === '#contact';
+            lenis.scrollTo(targetEl, {
+              offset: isContact ? -20 : 0,
+              duration: isContact ? 5.0 : 1.3,
+              easing: isContact
+                ? (t) => -(Math.cos(Math.PI * t) - 1) / 2
+                : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            });
           }
         }
       }
@@ -322,7 +359,12 @@ function App() {
             </div>
 
             <div className="header-right">
-              <a href="#contact" className="btn-contact" aria-label="Contact Me">
+              <a
+                href="#contact"
+                className="btn-contact"
+                aria-label="Contact Me"
+                onClick={handleScrollToSection('#contact')}
+              >
                 <span>Contact Me</span>
               </a>
             </div>
@@ -360,7 +402,12 @@ function App() {
             </div>
 
             <div className="bottom-right-actions">
-              <a href="#work" className="btn-explore" aria-label="Explore Work">
+              <a
+                href="#work"
+                className="btn-explore"
+                aria-label="Explore Work"
+                onClick={handleScrollToSection('#work')}
+              >
                 <span className="btn-explore-icon">↗</span>
                 <span>Explore Work →</span>
               </a>
@@ -371,6 +418,7 @@ function App() {
         {/* PROJECTS SECTION */}
         <section id="work" className="projects-section">
           <div className="projects-header">
+            <span className="section-eyebrow">WORK</span>
             <h2 className="projects-heading">My Projects</h2>
           </div>
 
@@ -474,6 +522,7 @@ function App() {
 
             {/* Section Header */}
             <div className="tech-header">
+              <span className="section-eyebrow">TECH STACK</span>
               <h2 className="tech-main-title">Technologies I Used</h2>
             </div>
 
@@ -588,7 +637,7 @@ function App() {
             logos={TECH_LOGOS}
             speed={48}
             direction="left"
-            gap={84}
+            gap={180}
             logoHeight={52}
             hoverSpeed={0}
             fadeOut={true}
@@ -603,16 +652,31 @@ function App() {
 
           {/* Section Header */}
           <div className="contact-header-wrap">
+            <span className="section-eyebrow">CONTACT US</span>
             <h2 className="contact-main-title">Want something Exceptional?</h2>
-            <h3 className="contact-sub-title">
-              Contact <span className="text-gradient">Us</span>
-            </h3>
           </div>
 
           <div className="contact-container">
             {/* Left Column: Interactive Contact Form */}
             <div className="contact-form-col">
-              <div className="contact-card-bezel">
+              <SpecularButton
+                as="div"
+                className="contact-specular-bezel"
+                radius={28}
+                tint="#0d0e14"
+                tintOpacity={1}
+                blur={0}
+                lineColor="#ffffff"
+                baseColor="#2d3039"
+                intensity={1.1}
+                shineSize={14}
+                shineFade={50}
+                thickness={1.5}
+                speed={0.35}
+                followMouse={true}
+                proximity={400}
+                autoAnimate={false}
+              >
                 <div className="contact-card-inner">
                   {isSubmitted ? (
                     <div className="form-success-state">
@@ -688,7 +752,7 @@ function App() {
                     </form>
                   )}
                 </div>
-              </div>
+              </SpecularButton>
             </div>
 
             {/* Right Column: Interactive Developer Terminal */}
@@ -706,7 +770,12 @@ function App() {
               <span className="footer-copy">© {new Date().getFullYear()} Flash Dev. All rights reserved.</span>
             </div>
             <div className="footer-right">
-              <a href="#" className="footer-back-to-top" aria-label="Back to top">
+              <a
+                href="#"
+                className="footer-back-to-top"
+                aria-label="Back to top"
+                onClick={handleScrollToSection(0)}
+              >
                 <span>Back to Top</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="19" x2="12" y2="5"></line>

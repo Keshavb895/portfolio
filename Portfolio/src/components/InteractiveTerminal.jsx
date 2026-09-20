@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
+import SpecularButton from './SpecularButton';
 import './InteractiveTerminal.css';
 
 const WELCOME_MESSAGES = [
   { type: 'system', text: 'Flash OS [Version 2.4.0 (x86_64-linux)]' },
   { type: 'system', text: 'Type "help" to view available commands.' },
-  { type: 'info', text: 'Try typing: email, projects, skills, socials, or clear' },
+  { type: 'info', text: 'Try typing: email, skills, or clear' },
 ];
 
 export default function InteractiveTerminal() {
@@ -45,10 +46,8 @@ export default function InteractiveTerminal() {
         responseEntries = [
           { type: 'output', text: 'AVAILABLE COMMANDS:' },
           { type: 'help-item', cmd: 'email', desc: 'Get direct email & copy action' },
-          { type: 'help-item', cmd: 'projects', desc: 'Browse featured project highlights' },
           { type: 'help-item', cmd: 'skills', desc: 'Display engineering stack & technologies' },
-          { type: 'help-item', cmd: 'socials', desc: 'Display links to GitHub, LinkedIn, Twitter' },
-          { type: 'help-item', cmd: 'about', desc: 'Short bio about Keshav' },
+          { type: 'help-item', cmd: 'about', desc: 'Short bio about FlashDev' },
           { type: 'help-item', cmd: 'contact', desc: 'Send a message via the form on the right' },
           { type: 'help-item', cmd: 'clear', desc: 'Clear the terminal output' },
           { type: 'help-item', cmd: 'whoami', desc: 'Show current active session' },
@@ -65,18 +64,6 @@ export default function InteractiveTerminal() {
         ];
         break;
 
-      case 'projects':
-      case 'project':
-      case 'work':
-        responseEntries = [
-          { type: 'output', text: '🚀 FEATURED PROJECTS:' },
-          { type: 'project-item', title: '1. 3D Interactive Portfolio', desc: 'WebGL Topography, custom fluid physics, kinetic typography & Lenis momentum scroll.' },
-          { type: 'project-item', title: '2. Full-Stack Web Platform', desc: 'React, Node.js, Express & MongoDB with modern JWT auth and cloud storage.' },
-          { type: 'project-item', title: '3. Distributed Microservices', desc: 'High-throughput APIs, Docker containers, CI/CD automated pipeline.' },
-          { type: 'info', text: '💡 Scroll up to the Projects section to explore interactive previews.' },
-        ];
-        break;
-
       case 'skills':
       case 'skill':
       case 'tech':
@@ -90,29 +77,10 @@ export default function InteractiveTerminal() {
         ];
         break;
 
-      case 'socials':
-      case 'social':
-      case 'links':
-      case 'github':
-      case 'linkedin':
-      case 'twitter':
-        responseEntries = [
-          { type: 'output', text: '🌐 SOCIAL & DEVELOPER PROFILES:' },
-          {
-            type: 'social-links',
-            links: [
-              { name: 'GitHub', url: 'https://github.com/Keshavb895' },
-              { name: 'LinkedIn', url: 'https://linkedin.com' },
-              { name: 'Twitter', url: 'https://twitter.com' },
-            ],
-          },
-        ];
-        break;
-
       case 'about':
       case 'bio':
         responseEntries = [
-          { type: 'output', text: '👨‍💻 KESHAV - Full Stack Software Engineer' },
+          { type: 'output', text: '👨‍💻 FLASHDEV - Full Stack Software Engineer' },
           { type: 'text', text: 'Crafting performant web experiences, elegant system architectures, and visually compelling digital products.' },
           { type: 'info', text: 'Status: 🟢 Available for new full-stack opportunities and ambitious projects.' },
         ];
@@ -190,8 +158,27 @@ export default function InteractiveTerminal() {
   };
 
   return (
-    <div className="terminal-card-bezel" onClick={() => inputRef.current?.focus()}>
-      {/* Terminal Window Top Bar */}
+    <SpecularButton
+      as="div"
+      className="contact-specular-bezel terminal-specular-bezel"
+      radius={28}
+      tint="#0d0e14"
+      tintOpacity={1}
+      blur={0}
+      lineColor="#ffffff"
+      baseColor="#2d3039"
+      intensity={1.1}
+      shineSize={14}
+      shineFade={50}
+      thickness={1.5}
+      speed={0.35}
+      followMouse={true}
+      proximity={400}
+      autoAnimate={false}
+      onClick={() => inputRef.current?.focus()}
+    >
+      <div className="terminal-card-inner">
+        {/* Terminal Window Top Bar */}
       <div className="terminal-header">
         <div className="terminal-controls">
           <span className="term-dot term-close" />
@@ -261,14 +248,6 @@ export default function InteractiveTerminal() {
               </div>
             );
           }
-          if (item.type === 'project-item') {
-            return (
-              <div key={idx} className="term-project-row">
-                <span className="term-project-title">{item.title}</span>
-                <span className="term-project-desc">{item.desc}</span>
-              </div>
-            );
-          }
           if (item.type === 'skill-row') {
             return (
               <div key={idx} className="term-skill-line">
@@ -277,28 +256,7 @@ export default function InteractiveTerminal() {
               </div>
             );
           }
-          if (item.type === 'social-links') {
-            return (
-              <div key={idx} className="term-social-row" onClick={(e) => e.stopPropagation()}>
-                {item.links.map((link, lIdx) => (
-                  <a
-                    key={lIdx}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="term-social-pill"
-                  >
-                    <span>{link.name}</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="term-link-icon">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                      <polyline points="15 3 21 3 21 9"></polyline>
-                      <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                  </a>
-                ))}
-              </div>
-            );
-          }
+
           return null;
         })}
 
@@ -315,7 +273,7 @@ export default function InteractiveTerminal() {
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck="false"
-            placeholder="type command (e.g. email, projects, help)..."
+            placeholder="type command (e.g. email, skills, help)..."
           />
         </div>
       </div>
@@ -323,7 +281,7 @@ export default function InteractiveTerminal() {
       {/* Quick Action Chips Bar */}
       <div className="terminal-chips-bar" onClick={(e) => e.stopPropagation()}>
         <span className="chips-label">Quick cmds:</span>
-        {['email', 'projects', 'skills', 'socials', 'help', 'clear'].map((cmd) => (
+        {['email', 'skills', 'help', 'clear'].map((cmd) => (
           <button
             key={cmd}
             type="button"
@@ -335,5 +293,6 @@ export default function InteractiveTerminal() {
         ))}
       </div>
     </div>
+    </SpecularButton>
   );
 }
