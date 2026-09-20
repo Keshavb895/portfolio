@@ -588,7 +588,7 @@ function App() {
             logos={TECH_LOGOS}
             speed={48}
             direction="left"
-            gap={48}
+            gap={84}
             logoHeight={52}
             hoverSpeed={0}
             fadeOut={true}
