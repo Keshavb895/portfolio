@@ -1,0 +1,470 @@
+/* ==========================================================================
+   Interactive Developer Terminal
+   ========================================================================== */
+
+.terminal-card-bezel {
+  position: relative;
+  background: rgba(13, 15, 23, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.7),
+              0 0 35px -10px rgba(6, 182, 212, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 520px;
+  max-height: 560px;
+  cursor: text;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.terminal-card-bezel:hover,
+.terminal-card-bezel:focus-within {
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 28px 70px -15px rgba(0, 0, 0, 0.8),
+              0 0 45px -8px rgba(6, 182, 212, 0.25);
+}
+
+/* Terminal Window Header */
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.25rem;
+  background: rgba(20, 22, 33, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  user-select: none;
+}
+
+.terminal-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.term-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.term-close {
+  background: #ff5f56;
+  box-shadow: 0 0 6px rgba(255, 95, 86, 0.6);
+}
+
+.term-minimize {
+  background: #ffbd2e;
+  box-shadow: 0 0 6px rgba(255, 189, 46, 0.6);
+}
+
+.term-zoom {
+  background: #27c93f;
+  box-shadow: 0 0 6px rgba(39, 201, 63, 0.6);
+}
+
+.terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.02em;
+}
+
+.term-shell-icon {
+  width: 14px;
+  height: 14px;
+  color: #06b6d4;
+}
+
+.terminal-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #10b981;
+  letter-spacing: 0.08em;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.term-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+/* Terminal Body Scrollable Area */
+.terminal-body {
+  flex: 1;
+  padding: 1.25rem 1.4rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.terminal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+/* Terminal Lines & Types */
+.term-line {
+  word-break: break-word;
+}
+
+.term-system {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+}
+
+.term-info {
+  color: #38bdf8;
+  font-size: 0.84rem;
+}
+
+.term-cmd-echo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: #ffffff;
+  margin-top: 0.35rem;
+}
+
+.term-prompt-prefix {
+  color: #10b981;
+  font-weight: 700;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.term-cmd-text {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.term-output {
+  color: rgba(255, 255, 255, 0.9);
+  padding-left: 0.5rem;
+}
+
+.term-error {
+  color: #f43f5e;
+  padding-left: 0.5rem;
+}
+
+/* Help Items */
+.term-help-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-left: 0.5rem;
+  font-size: 0.84rem;
+}
+
+.term-help-cmd {
+  color: #eab308;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(234, 179, 8, 0.12);
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.term-help-cmd:hover {
+  background: rgba(234, 179, 8, 0.25);
+  color: #fde047;
+  transform: translateX(2px);
+}
+
+.term-help-desc {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Email Card Inside Terminal */
+.term-email-card {
+  margin: 0.35rem 0.5rem;
+  padding: 0.85rem 1.1rem;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.term-email-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.term-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #06b6d4;
+}
+
+.term-email-link {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.term-email-link:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+.term-copy-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.term-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Projects in Terminal */
+.term-project-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid rgba(6, 182, 212, 0.4);
+  margin: 0.25rem 0;
+}
+
+.term-project-title {
+  color: #38bdf8;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.term-project-desc {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+}
+
+/* Skills in Terminal */
+.term-skill-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.term-skill-cat {
+  color: #a855f7;
+  font-weight: 700;
+  font-size: 0.85rem;
+  min-width: 90px;
+}
+
+.term-skill-items {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+}
+
+/* Social Pills in Terminal */
+.term-social-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.term-social-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.term-social-pill:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #06b6d4;
+  transform: translateY(-2px);
+}
+
+.term-link-icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* Active Command Input Line */
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #ffffff;
+  padding: 0;
+  margin: 0;
+  caret-color: #10b981;
+}
+
+.terminal-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-style: italic;
+}
+
+/* Quick Action Chips Bar */
+.terminal-chips-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(18, 20, 30, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  user-select: none;
+}
+
+.chips-label {
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-right: 0.25rem;
+}
+
+.terminal-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.terminal-chip:hover {
+  background: rgba(6, 182, 212, 0.18);
+  border-color: rgba(6, 182, 212, 0.45);
+  color: #06b6d4;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .terminal-card-bezel {
+    height: 450px;
+  }
+}
+
+@media (max-width: 600px) {
+  .terminal-card-bezel {
+    height: 410px;
+    border-radius: 1.25rem;
+  }
+
+  .terminal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .terminal-title {
+    font-size: 0.75rem;
+  }
+
+  .terminal-status-badge {
+    display: none;
+  }
+
+  .terminal-body {
+    padding: 1rem;
+    font-size: 0.82rem;
+    gap: 0.5rem;
+  }
+
+  .term-email-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .term-copy-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  .terminal-chips-bar {
+    padding: 0.6rem 0.9rem;
+    gap: 0.35rem;
+  }
+
+  .chips-label {
+    display: none;
+  }
+
+  .terminal-chip {
+    font-size: 0.72rem;
+    padding: 0.22rem 0.55rem;
+  }
+
+  .terminal-input {
+    font-size: 0.82rem;
+  }
+}
