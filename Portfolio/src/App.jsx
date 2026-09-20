@@ -582,18 +582,14 @@ function App() {
           </div>
         </section>
 
-        {/* LOGO LOOP / TECH ECOSYSTEM MARQUEE */}
+        {/* LOGO LOOP / TECH MARQUEE */}
         <section className="logo-loop-section">
-          <div className="logo-loop-header">
-            <span className="logo-loop-badge">TECH ECOSYSTEM</span>
-            <h3 className="logo-loop-title">Tools, Frameworks & Infrastructure</h3>
-          </div>
           <LogoLoop
             logos={TECH_LOGOS}
             speed={48}
             direction="left"
-            gap={36}
-            logoHeight={28}
+            gap={40}
+            logoHeight={36}
             hoverSpeed={0}
             fadeOut={true}
             scaleOnHover={true}

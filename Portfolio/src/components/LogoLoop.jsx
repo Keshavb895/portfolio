@@ -83,13 +83,14 @@ export default function LogoLoop({
           <div
             key={idx}
             className={`logo-loop-item ${scaleOnHover ? 'scale-hover' : ''}`}
+            title={item.name}
+            aria-label={item.name}
             style={{
-              height: `${logoHeight + 20}px`,
               '--item-accent': item.color || '#06b6d4'
             }}
           >
             {item.icon ? (
-              <span className="logo-item-icon" style={{ height: `${logoHeight}px` }}>
+              <span className="logo-item-icon" style={{ height: `${logoHeight}px`, width: `${logoHeight}px` }}>
                 {item.icon}
               </span>
             ) : item.src ? (
@@ -100,7 +101,6 @@ export default function LogoLoop({
                 style={{ height: `${logoHeight}px` }}
               />
             ) : null}
-            {item.name && <span className="logo-item-name">{item.name}</span>}
           </div>
         ))}
       </div>
