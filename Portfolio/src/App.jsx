@@ -376,32 +376,32 @@ function App() {
 
           <div className="projects-images-container">
             {/* Project 1: Flash Jewels */}
-            <a 
-              href="https://jewellery-lime-three.vercel.app/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://jewellery-lime-three.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="project-image-link"
               aria-label="Visit Flash Jewels website"
             >
-              <img 
-                src="/projects/project1.png" 
-                alt="Flash Jewels" 
-                className="project-image" 
+              <img
+                src="/projects/project1.png"
+                alt="Flash Jewels"
+                className="project-image"
               />
             </a>
 
             {/* Project 2: VG Portfolio */}
-            <a 
-              href="https://personal-portfolio-two-blush-81.vercel.app/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://personal-portfolio-two-blush-81.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="project-image-link"
               aria-label="Visit Vaibhav Gupta portfolio website"
             >
-              <img 
-                src="/projects/project2.png" 
-                alt="Vaibhav Gupta Portfolio" 
-                className="project-image" 
+              <img
+                src="/projects/project2.png"
+                alt="Vaibhav Gupta Portfolio"
+                className="project-image"
               />
             </a>
           </div>
@@ -411,8 +411,8 @@ function App() {
         <section id="technologies" className="technologies-section">
           <div className="tech-container" ref={techContainerRef}>
             {/* SVG Path Weaving from Right of Title through Images */}
-            <svg 
-              className="tech-svg-canvas" 
+            <svg
+              className="tech-svg-canvas"
               aria-hidden="true"
               ref={svgRef}
             >
@@ -484,9 +484,9 @@ function App() {
                 <div className="tech-visual-col tech-reveal-left">
                   <div className="tech-card-bezel">
                     <div className="tech-image-card">
-                      <img 
-                        src="/technologies/mongodb.jpg" 
-                        alt="MongoDB Database Architecture" 
+                      <img
+                        src="/technologies/mongodb.jpg"
+                        alt="MongoDB Database Architecture"
                         className="tech-showcase-img"
                       />
                     </div>
@@ -519,9 +519,9 @@ function App() {
                 <div className="tech-visual-col tech-reveal-right">
                   <div className="tech-card-bezel">
                     <div className="tech-image-card">
-                      <img 
-                        src="/technologies/node.jpg" 
-                        alt="Node.js & Express Server Architecture" 
+                      <img
+                        src="/technologies/node.jpg"
+                        alt="Node.js & Express Server Architecture"
                         className="tech-showcase-img"
                       />
                     </div>
@@ -534,9 +534,9 @@ function App() {
                 <div className="tech-visual-col tech-reveal-left">
                   <div className="tech-card-bezel">
                     <div className="tech-image-card">
-                      <img 
-                        src="/technologies/react.jpg" 
-                        alt="React & Reactive Interfaces" 
+                      <img
+                        src="/technologies/react.jpg"
+                        alt="React & Reactive Interfaces"
                         className="tech-showcase-img"
                       />
                     </div>
@@ -569,9 +569,9 @@ function App() {
                 <div className="tech-visual-col tech-reveal-right">
                   <div className="tech-card-bezel">
                     <div className="tech-image-card">
-                      <img 
-                        src="/technologies/devops.jpg" 
-                        alt="End-to-End MERN Deployment & DevOps" 
+                      <img
+                        src="/technologies/devops.jpg"
+                        alt="End-to-End MERN Deployment & DevOps"
                         className="tech-showcase-img"
                       />
                     </div>
