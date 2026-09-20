@@ -587,10 +587,10 @@ function App() {
 
           {/* Section Header */}
           <div className="contact-header-wrap">
-            <span className="contact-eyebrow">Want something Exceptional?</span>
-            <h2 className="contact-main-heading">
+            <h2 className="contact-main-title">Want something Exceptional?</h2>
+            <h3 className="contact-sub-title">
               Contact <span className="text-gradient">Us</span>
-            </h2>
+            </h3>
           </div>
 
           <div className="contact-container">

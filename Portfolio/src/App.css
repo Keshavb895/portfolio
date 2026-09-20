@@ -688,25 +688,23 @@
   gap: 0.65rem;
 }
 
-.contact-eyebrow {
-  font-family: monospace;
-  font-size: clamp(0.85rem, 1.1vw, 1.05rem);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #06b6d4;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.contact-main-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: #ffffff;
+  margin: 0;
 }
 
-.contact-main-heading {
+.contact-sub-title {
   font-family: var(--font-heading);
-  font-size: clamp(2.6rem, 5vw, 4.2rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  color: #ffffff;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
 }
 
