@@ -97,11 +97,7 @@ function App() {
       const containerRect = container.getBoundingClientRect();
       const w = containerRect.width;
       const h = containerRect.height;
-      if (window.innerWidth <= 900) {
-        if (trackPathRef.current) trackPathRef.current.setAttribute('d', '');
-        if (progressPathRef.current) progressPathRef.current.setAttribute('d', '');
-        return;
-      }
+      if (w === 0 || h === 0) return;
 
       svgRef.current.setAttribute('width', `${w}`);
       svgRef.current.setAttribute('height', `${h}`);
@@ -112,12 +108,18 @@ function App() {
       if (rows.length < 4 || !titleEl) return;
 
       const titleRect = titleEl.getBoundingClientRect();
-      // Start point: directly to the right of "Technologies I Used"
-      const startX = titleRect.right - containerRect.left + 25;
+      const isMobile = w <= 900;
+
+      // Start point: directly from "Technologies I Used" title
+      const startX = isMobile
+        ? Math.min(titleRect.right - containerRect.left + 15, w - 30)
+        : titleRect.right - containerRect.left + 25;
       const startY = titleRect.top - containerRect.top + titleRect.height / 2;
 
-      // Straight line to the right
-      const straightX = Math.max(startX + 60, w * 0.85);
+      // Straight line to the right before entering the technology cards
+      const straightX = isMobile
+        ? Math.min(startX + 24, w - 20)
+        : Math.max(startX + 60, w * 0.85);
       const straightY = startY;
 
       const getRelativeBox = (el) => {
@@ -141,44 +143,86 @@ function App() {
       const r3Img = getRelativeBox(rows[2].querySelector('.tech-card-bezel'));
       const r4Img = getRelativeBox(rows[3].querySelector('.tech-card-bezel'));
 
-      // 1. Straight horizontal segment from right of title
-      // 2. Then curved path through the images:
-      //    MongoDB (Left) -> Node.js (Right) -> React (Left) -> DevOps (Right)
-      const curvePoints = [
-        { x: straightX, y: straightY },
-        // Smooth swoop down and across towards Image 1 (MongoDB on Left)
-        { x: straightX + 15, y: straightY + (r1Img.top - straightY) * 0.35 },
-        { x: (straightX + r1Img.x) / 2, y: straightY + (r1Img.top - straightY) * 0.7 },
-        // Enters Image 1 (MongoDB on Left)
-        { x: r1Img.x, y: r1Img.top },
-        { x: r1Img.x, y: r1Img.y },
-        { x: r1Img.x, y: r1Img.bottom },
+      let curvePoints = [];
 
-        // Curves across from Image 1 (Left) to Image 2 (Right)
-        { x: (r1Img.x + r2Img.x) / 2, y: (r1Img.bottom + r2Img.top) / 2 },
+      if (!isMobile) {
+        curvePoints = [
+          { x: straightX, y: straightY },
+          // Smooth swoop down and across towards Image 1 (MongoDB on Left)
+          { x: straightX + 15, y: straightY + (r1Img.top - straightY) * 0.35 },
+          { x: (straightX + r1Img.x) / 2, y: straightY + (r1Img.top - straightY) * 0.7 },
+          // Enters Image 1 (MongoDB on Left)
+          { x: r1Img.x, y: r1Img.top },
+          { x: r1Img.x, y: r1Img.y },
+          { x: r1Img.x, y: r1Img.bottom },
 
-        // Enters Image 2 (Node.js on Right)
-        { x: r2Img.x, y: r2Img.top },
-        { x: r2Img.x, y: r2Img.y },
-        { x: r2Img.x, y: r2Img.bottom },
+          // Curves across from Image 1 (Left) to Image 2 (Right)
+          { x: (r1Img.x + r2Img.x) / 2, y: (r1Img.bottom + r2Img.top) / 2 },
 
-        // Curves across from Image 2 (Right) to Image 3 (Left)
-        { x: (r2Img.x + r3Img.x) / 2, y: (r2Img.bottom + r3Img.top) / 2 },
+          // Enters Image 2 (Node.js on Right)
+          { x: r2Img.x, y: r2Img.top },
+          { x: r2Img.x, y: r2Img.y },
+          { x: r2Img.x, y: r2Img.bottom },
 
-        // Enters Image 3 (React on Left)
-        { x: r3Img.x, y: r3Img.top },
-        { x: r3Img.x, y: r3Img.y },
-        { x: r3Img.x, y: r3Img.bottom },
+          // Curves across from Image 2 (Right) to Image 3 (Left)
+          { x: (r2Img.x + r3Img.x) / 2, y: (r2Img.bottom + r3Img.top) / 2 },
 
-        // Curves across from Image 3 (Left) to Image 4 (Right)
-        { x: (r3Img.x + r4Img.x) / 2, y: (r3Img.bottom + r4Img.top) / 2 },
+          // Enters Image 3 (React on Left)
+          { x: r3Img.x, y: r3Img.top },
+          { x: r3Img.x, y: r3Img.y },
+          { x: r3Img.x, y: r3Img.bottom },
 
-        // Enters Image 4 (DevOps on Right) and traverses completely through top, center, and bottom
-        { x: r4Img.x, y: r4Img.top },
-        { x: r4Img.x, y: r4Img.y },
-        { x: r4Img.x, y: r4Img.bottom },
-        { x: r4Img.x, y: r4Img.bottom + 60 },
-      ];
+          // Curves across from Image 3 (Left) to Image 4 (Right)
+          { x: (r3Img.x + r4Img.x) / 2, y: (r3Img.bottom + r4Img.top) / 2 },
+
+          // Enters Image 4 (DevOps on Right) and traverses completely through top, center, and bottom
+          { x: r4Img.x, y: r4Img.top },
+          { x: r4Img.x, y: r4Img.y },
+          { x: r4Img.x, y: r4Img.bottom },
+          { x: r4Img.x, y: r4Img.bottom + 60 },
+        ];
+      } else {
+        // Mobile & tablet: Weave gracefully back and forth through cards and text
+        const xLeft = Math.max(28, w * 0.22);
+        const xRight = Math.min(w - 28, w * 0.78);
+        const xCenter = w * 0.5;
+
+        curvePoints = [
+          { x: straightX, y: straightY },
+          // Swoop down towards Card 1
+          { x: straightX, y: straightY + (r1Img.top - straightY) * 0.4 },
+          { x: (straightX + xLeft) / 2, y: straightY + (r1Img.top - straightY) * 0.75 },
+          // Enters Card 1 (MongoDB)
+          { x: xLeft, y: r1Img.top },
+          { x: xLeft, y: r1Img.y },
+          { x: xLeft, y: r1Img.bottom },
+
+          // Curves through Row 1 text across to Card 2
+          { x: xCenter, y: (r1Img.bottom + r2Img.top) / 2 },
+
+          // Enters Card 2 (Node.js on Right)
+          { x: xRight, y: r2Img.top },
+          { x: xRight, y: r2Img.y },
+          { x: xRight, y: r2Img.bottom },
+
+          // Curves through Row 2 text across to Card 3
+          { x: xCenter, y: (r2Img.bottom + r3Img.top) / 2 },
+
+          // Enters Card 3 (React on Left)
+          { x: xLeft, y: r3Img.top },
+          { x: xLeft, y: r3Img.y },
+          { x: xLeft, y: r3Img.bottom },
+
+          // Curves through Row 3 text across to Card 4
+          { x: xCenter, y: (r3Img.bottom + r4Img.top) / 2 },
+
+          // Enters Card 4 (DevOps on Right)
+          { x: xRight, y: r4Img.top },
+          { x: xRight, y: r4Img.y },
+          { x: r4Img.x, y: r4Img.bottom },
+          { x: r4Img.x, y: r4Img.bottom + 45 },
+        ];
+      }
 
       // Form path: start with straight line L straightX straightY, then cubic spline C ...
       let d = `M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${straightX.toFixed(1)} ${straightY.toFixed(1)}`;
@@ -201,7 +245,7 @@ function App() {
 
       const length = progressPathRef.current.getTotalLength();
       totalLengthRef.current = length;
-      targetDistRef.current = r4Img.bottom + 60;
+      targetDistRef.current = r4Img.bottom + (isMobile ? 45 : 60);
       progressPathRef.current.style.strokeDasharray = `${length}`;
       progressPathRef.current.style.strokeDashoffset = `${length}`;
     };
@@ -279,6 +323,14 @@ function App() {
     const timer1 = setTimeout(handleResize, 150);
     const timer2 = setTimeout(handleResize, 500);
 
+    // Dynamic resize observer on the technologies container
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    if (techContainerRef.current) {
+      resizeObserver.observe(techContainerRef.current);
+    }
+
     // IntersectionObserver for scroll-reveal animations
     const observer = new IntersectionObserver(
       (entries) => {
@@ -325,6 +377,11 @@ function App() {
       cancelAnimationFrame(rafId);
       lenis.destroy();
       observer.disconnect();
+      resizeObserver.disconnect();
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener('click', handleAnchorClick);
     };
   }, []);

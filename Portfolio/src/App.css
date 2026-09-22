@@ -486,6 +486,7 @@
   width: 100%;
   box-sizing: border-box;
   z-index: 2;
+  overflow: hidden;
 }
 
 .tech-container {
@@ -1441,10 +1442,6 @@
     padding: 4rem 1.5rem 8rem;
   }
 
-  .tech-svg-canvas {
-    display: none;
-  }
-
   .tech-container {
     gap: 4.5rem;
   }
@@ -1585,6 +1582,14 @@
     font-size: 0.88rem;
     line-height: 1.55;
     padding-left: 1.35rem;
+  }
+
+  .tech-path-progress {
+    stroke-width: 3.5;
+  }
+
+  .tech-path-track {
+    stroke-width: 2;
   }
 
   .tech-card-screen {
