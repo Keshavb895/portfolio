@@ -1,4 +1,4 @@
-// Component ported from https://codepen.io/JuanFuentes/full/rgXKGQ
+// Component ported and stabilized from https://codepen.io/JuanFuentes/full/rgXKGQ
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 
@@ -9,8 +9,10 @@ const dist = (a, b) => {
 };
 
 const getAttr = (distance, maxDist, minVal, maxVal) => {
-  const val = maxVal - Math.abs((maxVal * distance) / maxDist);
-  return Math.max(minVal, val + minVal);
+  if (!isFinite(maxDist) || maxDist <= 0) return minVal;
+  const ratio = Math.min(Math.max(distance / maxDist, 0), 1);
+  const val = maxVal - (maxVal - minVal) * ratio;
+  return Math.max(minVal, Math.min(maxVal, val));
 };
 
 const debounce = (func, delay) => {
@@ -41,7 +43,11 @@ const TextPressure = ({
   strokeColor = '#FF0000',
   className = '',
 
-  minFontSize = 24
+  minFontSize = 48,
+  minWidth = 42,
+  maxWidth = 125,
+  minWeight = 350,
+  maxWeight = 800
 }) => {
   const containerRef = useRef(null);
   const titleRef = useRef(null);
@@ -56,6 +62,7 @@ const TextPressure = ({
 
   const chars = text.split('');
 
+  // Mouse / Touch tracking
   useEffect(() => {
     const handleMouseMove = e => {
       cursorRef.current.x = e.clientX;
@@ -63,17 +70,27 @@ const TextPressure = ({
     };
     const handleTouchMove = e => {
       const t = e.touches[0];
-      cursorRef.current.x = t.clientX;
-      cursorRef.current.y = t.clientY;
+      if (t) {
+        cursorRef.current.x = t.clientX;
+        cursorRef.current.y = t.clientY;
+      }
+    };
+    const handleTouchStart = e => {
+      const t = e.touches[0];
+      if (t) {
+        cursorRef.current.x = t.clientX;
+        cursorRef.current.y = t.clientY;
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
 
     if (containerRef.current) {
-      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-      mouseRef.current.x = left + width / 2;
-      mouseRef.current.y = top + height / 2;
+      const { left, top, width: w, height: h } = containerRef.current.getBoundingClientRect();
+      mouseRef.current.x = left + w / 2;
+      mouseRef.current.y = top + h / 2;
       cursorRef.current.x = mouseRef.current.x;
       cursorRef.current.y = mouseRef.current.y;
     }
@@ -81,40 +98,92 @@ const TextPressure = ({
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchStart);
     };
   }, []);
 
+  // Robust sizing calculation that fits both width and height without visual blowout
   const setSize = useCallback(() => {
-    if (!containerRef.current || !titleRef.current) return;
+    if (!containerRef.current) return;
 
     const { width: containerW, height: containerH } = containerRef.current.getBoundingClientRect();
+    if (containerW <= 0 || containerH <= 0) return;
 
-    let newFontSize = containerW / (chars.length / 2);
-    newFontSize = Math.max(newFontSize, minFontSize);
+    // Detect actual letter spacing / gap
+    let gapTotal = 0;
+    if (titleRef.current) {
+      const cs = window.getComputedStyle(titleRef.current);
+      const gapVal = parseFloat(cs.gap || cs.columnGap);
+      if (!isNaN(gapVal) && gapVal > 0) {
+        gapTotal = gapVal * (chars.length - 1);
+      }
+    }
+    if (gapTotal === 0) {
+      gapTotal = Math.max(0, (chars.length - 1) * 32);
+    }
 
-    setFontSize(newFontSize);
+    const availableW = Math.max(containerW - gapTotal, 60);
+    // Dynamic width ratio based on minWidth setting
+    const targetCharWidthRatio = Math.max(0.30, (minWidth / 100) * 0.62);
+    const fontSizeFromWidth = availableW / (chars.length * targetCharWidthRatio);
+    // Fill up to ~82% of container height for taller, elongated letter length
+    const fontSizeFromHeight = containerH * 0.82;
+
+    let targetFontSize = Math.min(fontSizeFromWidth, fontSizeFromHeight);
+    const effectiveMinFontSize = Math.min(minFontSize, fontSizeFromWidth);
+    targetFontSize = Math.max(targetFontSize, effectiveMinFontSize);
+
+    setFontSize(Math.round(targetFontSize));
     setScaleY(1);
     setLineHeight(1);
+  }, [chars.length, minFontSize, minWidth]);
 
-    requestAnimationFrame(() => {
-      if (!titleRef.current) return;
-      const textRect = titleRef.current.getBoundingClientRect();
-
-      if (scale && textRect.height > 0) {
-        const yRatio = containerH / textRect.height;
-        setScaleY(yRatio);
-        setLineHeight(yRatio);
-      }
-    });
-  }, [chars.length, minFontSize, scale]);
-
+  // ResizeObserver for rock-solid reactive resizing on container changes
   useEffect(() => {
-    const debouncedSetSize = debounce(setSize, 100);
-    debouncedSetSize();
+    if (!containerRef.current) return;
+
+    const ro = new ResizeObserver(() => {
+      setSize();
+    });
+    ro.observe(containerRef.current);
+
+    const debouncedSetSize = debounce(setSize, 60);
     window.addEventListener('resize', debouncedSetSize);
-    return () => window.removeEventListener('resize', debouncedSetSize);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', debouncedSetSize);
+    };
   }, [setSize]);
 
+  // Fonts ready listener to prevent fallback font measurement race conditions
+  useEffect(() => {
+    if (typeof document !== 'undefined' && document.fonts) {
+      document.fonts.ready.then(() => {
+        setSize();
+      });
+      const onLoadingDone = () => setSize();
+      document.fonts.addEventListener('loadingdone', onLoadingDone);
+      return () => {
+        document.fonts.removeEventListener('loadingdone', onLoadingDone);
+      };
+    }
+  }, [setSize]);
+
+  // Initial stabilization timers on mount
+  useEffect(() => {
+    setSize();
+    const t1 = setTimeout(setSize, 50);
+    const t2 = setTimeout(setSize, 150);
+    const t3 = setTimeout(setSize, 400);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [setSize]);
+
+  // Animation frame loop for variable font pressure dynamics
   useEffect(() => {
     let rafId;
     const animate = () => {
@@ -123,7 +192,7 @@ const TextPressure = ({
 
       if (titleRef.current) {
         const titleRect = titleRef.current.getBoundingClientRect();
-        const maxDist = titleRect.width / 2;
+        const maxDist = Math.max(titleRect.width / 2, 1);
 
         spansRef.current.forEach(span => {
           if (!span) return;
@@ -136,8 +205,9 @@ const TextPressure = ({
 
           const d = dist(mouseRef.current, charCenter);
 
-          const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
-          const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 450)) : 200;
+          // Full, expansive width and bold weight at rest; dynamically swells higher on proximity
+          const wdth = width ? Math.floor(getAttr(d, maxDist, minWidth, maxWidth)) : minWidth;
+          const wght = weight ? Math.floor(getAttr(d, maxDist, minWeight, maxWeight)) : minWeight;
           const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : 0;
           const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : 1;
 
@@ -157,7 +227,7 @@ const TextPressure = ({
 
     animate();
     return () => cancelAnimationFrame(rafId);
-  }, [width, weight, italic, alpha]);
+  }, [width, weight, italic, alpha, minWidth, maxWidth, minWeight, maxWeight]);
 
   const styleElement = useMemo(() => {
     return (
@@ -200,7 +270,10 @@ const TextPressure = ({
         position: 'relative',
         width: '100%',
         height: '100%',
-        background: 'transparent'
+        background: 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}
     >
       {styleElement}
@@ -211,14 +284,14 @@ const TextPressure = ({
           fontFamily,
           textTransform: 'uppercase',
           fontSize: fontSize,
-          lineHeight,
+          lineHeight: 1,
           transform: `scale(1, ${scaleY})`,
-          transformOrigin: 'center top',
+          transformOrigin: 'center center',
           margin: 0,
           textAlign: 'center',
           userSelect: 'none',
           whiteSpace: 'nowrap',
-          fontWeight: 100,
+          fontWeight: minWeight,
           width: '100%'
         }}
       >
@@ -231,7 +304,8 @@ const TextPressure = ({
             data-char={char}
             style={{
               display: 'inline-block',
-              color: stroke ? undefined : textColor
+              color: stroke ? undefined : textColor,
+              fontVariationSettings: `'wght' ${minWeight}, 'wdth' ${minWidth}, 'ital' 0`
             }}
           >
             {char}

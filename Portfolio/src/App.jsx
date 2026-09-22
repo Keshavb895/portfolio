@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import TextPressure from './components/TextPressure';
-import Topography from './components/Topography';
+import GhostCursor from './components/GhostCursor';
 import InteractiveTerminal from './components/InteractiveTerminal';
 import LogoLoop from './components/LogoLoop';
 import { TECH_LOGOS } from './components/techLogos';
 import SpecularButton from './components/SpecularButton';
+import ScrollExpand from './components/ScrollExpand';
 import './App.css';
 
 function getSmoothPath(points) {
@@ -38,6 +39,7 @@ function App() {
     setIsSubmitted(true);
   };
 
+  const heroRef = useRef(null);
   const techContainerRef = useRef(null);
   const svgRef = useRef(null);
   const trackPathRef = useRef(null);
@@ -95,7 +97,11 @@ function App() {
       const containerRect = container.getBoundingClientRect();
       const w = containerRect.width;
       const h = containerRect.height;
-      if (w === 0 || h === 0) return;
+      if (window.innerWidth <= 900) {
+        if (trackPathRef.current) trackPathRef.current.setAttribute('d', '');
+        if (progressPathRef.current) progressPathRef.current.setAttribute('d', '');
+        return;
+      }
 
       svgRef.current.setAttribute('width', `${w}`);
       svgRef.current.setAttribute('height', `${h}`);
@@ -202,9 +208,20 @@ function App() {
 
     // Smooth scroll-driven animation along the path
     const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+
+      // Subtle fade between hero and second section on scroll
+      if (heroRef.current) {
+        const heroH = heroRef.current.offsetHeight || windowHeight;
+        const fadeProgress = Math.min(1, Math.max(0, scrollY / (heroH * 0.75)));
+        const heroOpacity = (1 - fadeProgress).toFixed(3);
+        heroRef.current.style.opacity = heroOpacity;
+        heroRef.current.style.pointerEvents = fadeProgress > 0.85 ? 'none' : 'auto';
+      }
+
       if (!techContainerRef.current || !progressPathRef.current || !runnerRef.current || !totalLengthRef.current) return;
       const rect = techContainerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
 
       // Starts when the title / top of section enters viewport (windowHeight * 0.75)
       // Completes when Image 4 (DevOps) bottom is reached and in view
@@ -215,7 +232,6 @@ function App() {
       let progress = currentDist / totalDist;
 
       // Guarantee 100% completion if user scrolls to/near bottom of page
-      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
       const maxScroll = document.documentElement.scrollHeight - windowHeight;
       if (maxScroll > 0 && scrollY >= maxScroll - 40) {
         progress = 1.0;
@@ -275,7 +291,9 @@ function App() {
       { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
     );
 
-    const revealElements = document.querySelectorAll('.tech-row');
+    const revealElements = document.querySelectorAll(
+      '.tech-row, .projects-header, .project-image-link, .contact-header-wrap, .contact-container, .contact-form-col, .contact-info-col'
+    );
     revealElements.forEach((el) => observer.observe(el));
 
     // Handle smooth anchor clicks with Lenis
@@ -317,38 +335,28 @@ function App() {
       <div className="ambient-background" aria-hidden="true">
         <div className="ambient-orb-1"></div>
         <div className="ambient-orb-2"></div>
+        <div className="ambient-orb-3"></div>
         <div className="ambient-grid"></div>
       </div>
 
       <div className="portfolio-wrapper">
         {/* HERO SECTION */}
-        <main className="hero-wrapper">
-          {/* Topography Dynamic Elevation Background */}
-          <div className="hero-topography-bg" aria-hidden="true">
-            <Topography
-              lowColor="#5227FF"
-              midColor="#FF9FFC"
-              highColor="#FFFFFF"
-              speed={0.35}
-              morphAmount={3.0}
-              morphSpeed={0.05}
-              bands={2.0}
-              thickness={0.01}
-              scale={1.0}
-              pixelSize={1.0}
-              glow={0.5}
-              colorMode="elevation"
-              contrast={3.0}
-              brightness={1.0}
-              fillBands={false}
-              opacity={1.0}
-              grain={true}
-              grainIntensity={0.05}
-              mouseInteraction={true}
-              mouseRadius={0.3}
-              mouseStrength={0.4}
-            />
-          </div>
+        <main ref={heroRef} className="hero-wrapper">
+          {/* Ghost Cursor Interactive Trail */}
+          <GhostCursor
+            color="#6366F1"
+            brightness={0.8}
+            edgeIntensity={0}
+            trailLength={40}
+            inertia={0.43}
+            grainIntensity={0.05}
+            bloomStrength={0.1}
+            bloomRadius={1.0}
+            bloomThreshold={0.025}
+            fadeDelayMs={1000}
+            fadeDurationMs={1500}
+            zIndex={0}
+          />
 
           {/* Top Navigation Bar */}
           <header className="hero-header">
@@ -376,7 +384,7 @@ function App() {
               <TextPressure
                 text="FLASH"
                 flex={true}
-                scale={true}
+                scale={false}
                 alpha={false}
                 stroke={false}
                 width={true}
@@ -384,7 +392,11 @@ function App() {
                 italic={true}
                 textColor="#ffffff"
                 strokeColor="#ffffff"
-                minFontSize={72}
+                minFontSize={48}
+                minWidth={42}
+                maxWidth={125}
+                minWeight={350}
+                maxWeight={800}
               />
             </div>
           </div>
@@ -413,7 +425,36 @@ function App() {
               </a>
             </div>
           </footer>
+
+          {/* Soft Bottom Gradient Fade into Second Section */}
+          <div className="hero-bottom-fade" aria-hidden="true" />
         </main>
+
+        {/* SCROLL EXPAND SHOWCASE SECTION */}
+        <section className="scroll-expand-section" aria-label="Scale showcase">
+          <ScrollExpand
+            src="/hero.jpg"
+            alt="Product hero"
+            title="Scalable Solutions"
+            scrollHint="Scroll to expand"
+            mediaZoom={1.35}
+            startWidth={42}
+            startHeight={58}
+            startRadius={24}
+            endRadius={0}
+            scrollDistance={2.0}
+            holdDistance={1.0}
+            smoothing={0}
+            overlayScrim={0.5}
+            useWindowScroll
+            enabled
+          >
+            <span className="overlay-brand">FLASH DEV</span>
+            <p>
+              Full-Stack Developer with a proven history of building and shipping robust solutions for over 10 diverse clients. I specialize in turning complex problems into seamless digital experiences from the ground up. I'm actively documenting my tech journey to share my learnings and build in public.
+            </p>
+          </ScrollExpand>
+        </section>
 
         {/* PROJECTS SECTION */}
         <section id="work" className="projects-section">
@@ -436,6 +477,9 @@ function App() {
                 alt="Flash Jewels"
                 className="project-image"
               />
+              <div className="project-hover-arrow" aria-hidden="true">
+                <span>↗</span>
+              </div>
             </a>
 
             {/* Project 2: VG Portfolio */}
@@ -451,6 +495,9 @@ function App() {
                 alt="Vaibhav Gupta Portfolio"
                 className="project-image"
               />
+              <div className="project-hover-arrow" aria-hidden="true">
+                <span>↗</span>
+              </div>
             </a>
           </div>
         </section>
