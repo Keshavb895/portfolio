@@ -199,7 +199,7 @@ export default function InteractiveTerminal() {
       </div>
 
       {/* Terminal Output & History */}
-      <div className="terminal-body" ref={terminalBodyRef}>
+      <div className="terminal-body" ref={terminalBodyRef} data-lenis-prevent="true">
         {history.map((item, idx) => {
           if (item.type === 'system') {
             return <div key={idx} className="term-line term-system">{item.text}</div>;

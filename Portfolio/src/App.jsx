@@ -62,10 +62,8 @@ function App() {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(scrollTarget, {
         offset: isContact ? -20 : 0,
-        duration: isContact ? 5.0 : 1.4,
-        easing: isContact
-          ? (t) => -(Math.cos(Math.PI * t) - 1) / 2
-          : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        duration: isContact ? 1.8 : 1.3,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
     } else {
       if (targetEl && targetEl.scrollIntoView) {
@@ -77,18 +75,23 @@ function App() {
   };
 
   useEffect(() => {
-    // Initialize Lenis for luxurious momentum smooth scrolling
+    // Initialize Lenis with full touch synchronization for luxurious momentum smooth scrolling on mobile
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.95,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0,
+      syncTouch: true,
+      syncTouchLerp: 0.085,
+      touchInertiaExponent: 1.65,
+      touchMultiplier: 1.85,
+      autoResize: true,
       infinite: false,
     });
     lenisRef.current = lenis;
+    window.lenis = lenis;
 
     // Compute dynamic path: straight from right of "Technologies I Used", then curved between images
     const updateCurvePath = () => {
@@ -361,10 +364,8 @@ function App() {
             const isContact = targetId === '#contact';
             lenis.scrollTo(targetEl, {
               offset: isContact ? -20 : 0,
-              duration: isContact ? 5.0 : 1.3,
-              easing: isContact
-                ? (t) => -(Math.cos(Math.PI * t) - 1) / 2
-                : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+              duration: isContact ? 1.8 : 1.3,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             });
           }
         }
