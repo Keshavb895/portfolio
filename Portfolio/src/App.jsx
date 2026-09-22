@@ -8,6 +8,8 @@ import LogoLoop from './components/LogoLoop';
 import { TECH_LOGOS } from './components/techLogos';
 import SpecularButton from './components/SpecularButton';
 import ScrollExpand from './components/ScrollExpand';
+import ScrollFloat from './components/ScrollFloat';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './App.css';
 
 function getSmoothPath(points) {
@@ -320,6 +322,7 @@ function App() {
     };
 
     lenis.on('scroll', handleScroll);
+    lenis.on('scroll', ScrollTrigger.update);
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleResize);
 
@@ -518,7 +521,16 @@ function App() {
         <section id="work" className="projects-section">
           <div className="projects-header">
             <span className="section-eyebrow">WORK</span>
-            <h2 className="projects-heading">My Projects</h2>
+            <ScrollFloat
+              containerClassName="projects-heading"
+              animationDuration={1}
+              ease="back.inOut(2)"
+              scrollStart="center bottom+=50%"
+              scrollEnd="bottom bottom-=40%"
+              stagger={0.03}
+            >
+              My Projects
+            </ScrollFloat>
           </div>
 
           <div className="projects-images-container">
@@ -628,7 +640,16 @@ function App() {
             {/* Section Header */}
             <div className="tech-header">
               <span className="section-eyebrow">TECH STACK</span>
-              <h2 className="tech-main-title">Technologies I Used</h2>
+              <ScrollFloat
+                containerClassName="tech-main-title"
+                animationDuration={1}
+                ease="back.inOut(2)"
+                scrollStart="center bottom+=50%"
+                scrollEnd="bottom bottom-=40%"
+                stagger={0.03}
+              >
+                Technologies I Used
+              </ScrollFloat>
             </div>
 
             {/* Alternating Tech Rows */}
@@ -758,7 +779,16 @@ function App() {
           {/* Section Header */}
           <div className="contact-header-wrap">
             <span className="section-eyebrow">CONTACT US</span>
-            <h2 className="contact-main-title">Want something Exceptional?</h2>
+            <ScrollFloat
+              containerClassName="contact-main-title"
+              animationDuration={1}
+              ease="back.inOut(2)"
+              scrollStart="center bottom+=50%"
+              scrollEnd="bottom bottom-=40%"
+              stagger={0.03}
+            >
+              Want something Exceptional?
+            </ScrollFloat>
           </div>
 
           <div className="contact-container">
